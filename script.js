@@ -39,8 +39,18 @@ function saveData() {
   localStorage.setItem("my-space-tabs", JSON.stringify(tabs));
   localStorage.setItem("my-space-active", activeId);
   if (database && cloudReady && !syncingFromCloud) {
-    database.ref("my-space").set({ tabs, notes: noteValues, activeId }).catch(error => console.error("Khong the luu Firebase:", error));
+    database.ref("my-space").set({ tabs, notes: noteValues, activeId }).catch(error => {
+      console.error("Khong the luu Firebase:", error);
+      cloudReady = false;
+    });
   }
+}
+
+function normalizeTabs(value) {
+  const sourceTabs = Array.isArray(value) ? value : Object.values(value || {});
+  return sourceTabs
+    .filter(tab => tab && tab.id)
+    .map(tab => ({ ...tab, links: Array.isArray(tab.links) ? tab.links : Object.values(tab.links || {}) }));
 }
 
 saveData();
@@ -118,12 +128,14 @@ try {
   database.ref("my-space").on("value", snapshot => {
     const cloudData = snapshot.val();
     cloudReady = true;
-    if (!cloudData || !Array.isArray(cloudData.tabs)) {
+    const cloudTabs = normalizeTabs(cloudData?.tabs);
+    if (!cloudData || cloudTabs.length === 0) {
       saveData();
       return;
     }
     syncingFromCloud = true;
-    tabs = cloudData.tabs;
+    tabs = cloudTabs;
+    if (!tabs.some(tab => tab.id === "overview")) tabs.unshift({ ...defaultTabs[0], links: defaultTabs[0].links.map(link => ({ ...link })) });
     noteValues = cloudData.notes || {};
     activeId = cloudData.activeId && tabs.some(tab => tab.id === cloudData.activeId) ? cloudData.activeId : tabs[0].id;
     localStorage.setItem("my-space-tabs", JSON.stringify(tabs));

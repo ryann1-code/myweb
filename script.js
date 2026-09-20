@@ -4,8 +4,22 @@ const defaultTabs = [
   { id: "ideas", name: "Ý tưởng", icon: "✧", links: [] }
 ];
 
-let tabs = JSON.parse(localStorage.getItem("my-space-tabs") || "null") || defaultTabs;
-if (!tabs.some(tab => tab.id === "overview")) tabs.unshift({ ...defaultTabs[0], links: [] });
+function cloneDefaultTabs() {
+  return defaultTabs.map(tab => ({ ...tab, links: tab.links.map(link => ({ ...link })) }));
+}
+
+function loadTabs() {
+  try {
+    const storedTabs = JSON.parse(localStorage.getItem("my-space-tabs") || "null");
+    if (!Array.isArray(storedTabs) || storedTabs.length === 0) return cloneDefaultTabs();
+    return storedTabs.map(tab => ({ ...tab, links: Array.isArray(tab.links) ? tab.links : [] }));
+  } catch {
+    return cloneDefaultTabs();
+  }
+}
+
+let tabs = loadTabs();
+if (!tabs.some(tab => tab.id === "overview")) tabs.unshift({ ...defaultTabs[0], links: defaultTabs[0].links.map(link => ({ ...link })) });
 let activeId = localStorage.getItem("my-space-active") || tabs[0].id;
 
 const tabList = document.querySelector("#tabList");
@@ -17,7 +31,12 @@ const linkDialog = document.querySelector("#linkDialog");
 const tabDialog = document.querySelector("#tabDialog");
 let notes;
 
-function saveData() { localStorage.setItem("my-space-tabs", JSON.stringify(tabs)); localStorage.setItem("my-space-active", activeId); }
+function saveData() {
+  localStorage.setItem("my-space-tabs", JSON.stringify(tabs));
+  localStorage.setItem("my-space-active", activeId);
+}
+
+saveData();
 function currentTab() { return tabs.find(tab => tab.id === activeId) || tabs[0]; }
 function renderTabs() {
   tabList.innerHTML = tabs.map(tab => `<div class="tab-row"><button class="tab-button ${tab.id === activeId ? "active" : ""}" data-tab="${tab.id}" type="button"><span class="tab-icon">${tab.icon}</span>${tab.name}</button>${tab.id === "overview" ? "" : `<button class="delete-tab" data-delete-tab="${tab.id}" title="Xóa khu vực" aria-label="Xóa khu vực ${tab.name}" type="button">×</button>`}</div>`).join("");

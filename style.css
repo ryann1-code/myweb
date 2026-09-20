@@ -51,3 +51,80 @@ input { width: 100%; padding: 11px 12px; color: var(--ink); border: 1px solid va
 .icon-choice { display: grid; place-items: center; width: 100%; aspect-ratio: 1; padding: 0; color: var(--ink); font-size: 18px; border: 1px solid transparent; border-radius: 7px; background: transparent; } .icon-choice:hover, .icon-choice.selected { border-color: #8bc9bd; background: var(--accent-soft); }
 .dialog-actions { display: flex; justify-content: end; gap: 9px; margin-top: 20px; } .cancel { padding: 10px 13px; color: var(--muted); border: 0; background: transparent; }
 @media (max-width:780px) { .app-shell { display: block; } aside { padding: 18px; } .brand { margin-bottom: 20px; } .side-label,.aside-note { display: none; } #tabList { display: flex; gap: 6px; overflow-x: auto; } .tab-button { width: auto; white-space: nowrap; } .new-tab { width: auto; margin: 8px 0 0; } main { padding: 22px 18px 35px; } .topbar { margin-bottom: 35px; } .date { display: none; } .hero { display: block; } .hero p { margin-bottom: 20px; } }
+
+/* Refined light and glass themes */
+body {
+  background-color: #edf5f2;
+  background-image: linear-gradient(135deg, rgba(255,255,255,.9), transparent 48%), radial-gradient(circle at 88% 8%, rgba(246,196,83,.2), transparent 24%), radial-gradient(#c7ddd7 1px, transparent 1px);
+  background-size: auto, auto, 22px 22px;
+  transition: background-color .25s ease, color .25s ease;
+}
+.app-shell { border: 1px solid rgba(255,255,255,.72); border-radius: 20px; overflow: hidden; }
+main { background: rgba(255,255,255,.22); }
+.topbar { margin-bottom: 44px; }
+.theme-switcher { box-shadow: 0 8px 20px rgba(39,81,78,.08); }
+.hero { padding: 4px 0 8px; }
+.add-link-button, .save-button { transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease; }
+.add-link-button:hover, .save-button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(15,118,110,.22); }
+.panel { box-shadow: 0 12px 32px rgba(34,73,72,.06); }
+.link-card { border-color: #dce9e5; box-shadow: 0 4px 12px rgba(38,74,75,.04); }
+.link-card a { line-height: 1.35; }
+.link-card small { font-size: 11px; }
+
+body[data-theme="glass"] {
+  --ink: #18373b;
+  --muted: #55777a;
+  --line: rgba(255,255,255,.58);
+  --paper: rgba(239,250,249,.3);
+  --white: rgba(255,255,255,.42);
+  --accent: #087f78;
+  --accent-dark: #05615e;
+  --accent-soft: rgba(210,244,235,.62);
+  background-color: #b6dedd;
+  background-image: linear-gradient(120deg, rgba(255,255,255,.68), transparent 42%), radial-gradient(circle at 82% 12%, rgba(255,219,174,.82), transparent 27%), radial-gradient(circle at 12% 88%, rgba(139,199,219,.72), transparent 32%), linear-gradient(145deg, #b7ddda, #d5e8d6 54%, #f0d6b9);
+  background-attachment: fixed;
+}
+body[data-theme="glass"] .app-shell {
+  background: rgba(245,255,253,.25);
+  border-color: rgba(255,255,255,.7);
+  box-shadow: 0 24px 80px rgba(48,91,91,.2);
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+}
+body[data-theme="glass"] aside {
+  background: linear-gradient(150deg, rgba(17,70,68,.88), rgba(24,91,86,.66));
+  border-right: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+body[data-theme="glass"] main { background: rgba(255,255,255,.12); }
+body[data-theme="glass"] .theme-switcher,
+body[data-theme="glass"] .panel,
+body[data-theme="glass"] dialog {
+  border-color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.42);
+  box-shadow: 0 18px 45px rgba(48,91,91,.13);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+body[data-theme="glass"] .link-card {
+  border-color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.34);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 8px 20px rgba(48,91,91,.08);
+}
+body[data-theme="glass"] .link-card:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 14px 28px rgba(48,91,91,.16); }
+body[data-theme="glass"] .notes textarea,
+body[data-theme="glass"] .note-editor,
+body[data-theme="glass"] input,
+body[data-theme="glass"] .icon-picker {
+  border-color: rgba(255,255,255,.68);
+  background: rgba(255,255,255,.34);
+}
+body[data-theme="glass"] .empty { border-color: rgba(255,255,255,.68); }
+
+@media (max-width:780px) {
+  .app-shell { border-radius: 0; border-left: 0; border-right: 0; }
+  body[data-theme="glass"] aside { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+  .topbar { flex-wrap: wrap; }
+  .theme-switcher { order: 3; width: 100%; justify-content: center; }
+}

@@ -21,6 +21,10 @@ function loadTabs() {
 let tabs = loadTabs();
 if (!tabs.some(tab => tab.id === "overview")) tabs.unshift({ ...defaultTabs[0], links: defaultTabs[0].links.map(link => ({ ...link })) });
 let activeId = localStorage.getItem("my-space-active") || tabs[0].id;
+let noteValues = {};
+let database;
+let cloudReady = false;
+let syncingFromCloud = false;
 
 const tabList = document.querySelector("#tabList");
 const linkGrid = document.querySelector("#linkGrid");
@@ -34,6 +38,9 @@ let notes;
 function saveData() {
   localStorage.setItem("my-space-tabs", JSON.stringify(tabs));
   localStorage.setItem("my-space-active", activeId);
+  if (database && cloudReady && !syncingFromCloud) {
+    database.ref("my-space").set({ tabs, notes: noteValues, activeId }).catch(error => console.error("Khong the luu Firebase:", error));
+  }
 }
 
 saveData();
@@ -46,6 +53,7 @@ function renderTabs() {
     const tab = tabs.find(item => item.id === button.dataset.deleteTab);
     if (!confirm(`Xóa khu vực “${tab.name}” cùng toàn bộ link và ghi chú?`)) return;
     tabs = tabs.filter(item => item.id !== tab.id);
+    delete noteValues[tab.id];
     localStorage.removeItem(`my-space-note-${tab.id}`);
     if (activeId === tab.id) activeId = tabs[0].id;
     saveData(); render();
@@ -61,15 +69,15 @@ function renderLinks() {
 function createNoteTab(noteText = "") {
   const sourceTabId = activeId;
   const noteTab = { id: `note-${Date.now()}`, name: `Ghi chú ${tabs.filter(item => item.kind === "note").length + 1}`, icon: "✎", kind: "note", links: [] };
-  tabs.push(noteTab); localStorage.removeItem(`my-space-note-${sourceTabId}`); localStorage.setItem(`my-space-note-${noteTab.id}`, noteText.trim()); activeId = noteTab.id; saveData(); render();
+  tabs.push(noteTab); delete noteValues[sourceTabId]; noteValues[noteTab.id] = noteText.trim(); localStorage.removeItem(`my-space-note-${sourceTabId}`); localStorage.setItem(`my-space-note-${noteTab.id}`, noteText.trim()); activeId = noteTab.id; saveData(); render();
 }
 function renderNotes() {
   const tab = currentTab();
-  const noteText = localStorage.getItem(`my-space-note-${activeId}`) || "";
+  const noteText = noteValues[activeId] ?? localStorage.getItem(`my-space-note-${activeId}`) ?? "";
   if (tab.kind === "note") {
     notesPanel.innerHTML = `<div class="panel-header"><h2>Ghi chú</h2><span class="count">${tab.name}</span></div><div class="note-editor" id="notes" contenteditable="true" data-placeholder="Viết nội dung ghi chú..."></div><button class="save-button" id="saveNoteChanges" type="button">Lưu ghi chú</button>`;
     notes = document.querySelector("#notes"); notes.innerHTML = noteText;
-    document.querySelector("#saveNoteChanges").addEventListener("click", () => localStorage.setItem(`my-space-note-${activeId}`, notes.innerHTML.trim()));
+    document.querySelector("#saveNoteChanges").addEventListener("click", () => { noteValues[activeId] = notes.innerHTML.trim(); localStorage.setItem(`my-space-note-${activeId}`, noteValues[activeId]); saveData(); });
     return;
   }
   notesPanel.innerHTML = `<div class="panel-header"><h2>Ghi chú nhanh</h2><span class="count">tự lưu</span></div><textarea id="notes" placeholder="Viết bất cứ điều gì bạn muốn nhớ..."></textarea><div class="note-actions"><button class="save-button" id="saveNotes" type="button">Lưu ghi chú</button><button class="create-note-button" id="createNote" type="button">＋ Tạo ghi chú</button></div>`;
@@ -93,3 +101,36 @@ const applyTheme = theme => { document.body.dataset.theme = theme; localStorage.
 document.querySelectorAll("[data-theme-choice]").forEach(button => button.addEventListener("click", () => applyTheme(button.dataset.themeChoice)));
 applyTheme(savedTheme);
 render();
+
+try {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBYAquJ1Z5NmQEOkJOaLGvsBrDgN0j7zTk",
+    authDomain: "webfornotes-123.firebaseapp.com",
+    databaseURL: "https://webfornotes-123-default-rtdb.firebaseio.com",
+    projectId: "webfornotes-123",
+    storageBucket: "webfornotes-123.firebasestorage.app",
+    messagingSenderId: "17773129493",
+    appId: "1:17773129493:web:ee0dec3b85a8617065c31c",
+    measurementId: "G-QR3YWQBJYN"
+  };
+  firebase.initializeApp(firebaseConfig);
+  database = firebase.database();
+  database.ref("my-space").on("value", snapshot => {
+    const cloudData = snapshot.val();
+    cloudReady = true;
+    if (!cloudData || !Array.isArray(cloudData.tabs)) {
+      saveData();
+      return;
+    }
+    syncingFromCloud = true;
+    tabs = cloudData.tabs;
+    noteValues = cloudData.notes || {};
+    activeId = cloudData.activeId && tabs.some(tab => tab.id === cloudData.activeId) ? cloudData.activeId : tabs[0].id;
+    localStorage.setItem("my-space-tabs", JSON.stringify(tabs));
+    localStorage.setItem("my-space-active", activeId);
+    syncingFromCloud = false;
+    render();
+  }, error => console.error("Khong the ket noi Firebase:", error));
+} catch (error) {
+  console.error("Firebase chua san sang, tiep tuc dung localStorage:", error);
+}

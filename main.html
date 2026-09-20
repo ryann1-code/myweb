@@ -3,22 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title> Just a Note </title>
+	<title>Just a note</title>
 	<link rel="stylesheet" href="style.css">
     <link rel="icon" href="chad.png" type="image/x-icon">
 </head>
 <body>
 	<div class="app-shell">
 		<aside>
-			<div class="brand" id="brandHome" role="button" tabindex="0" title=" Home "><div class="brand-mark">λ</div><div><strong>YOUR SPACE!</strong><small>Have a nice day!</small></div></div>
-			<p class="side-label">All tabs</p>
+			<div class="brand" id="brandHome" role="button" tabindex="0" title="Home"><div class="brand-mark">✦</div><div><strong>Just a note</strong><small>Have a nice day!</small></div></div>
+			<p class="side-label">All tabs </p>
 			<nav id="tabList" aria-label="Các tab"></nav>
-			<button class="new-tab" id="newTabButton" type="button">＋ <span>New tab </span></button>
+			<button class="new-tab" id="newTabButton" type="button">＋ <span>New tab</span></button>
+			<p class="aside-note"> "Do it or dont do it, you will regret both." -Soren Kirkegaard- </p>
 		</aside>
 		<main>
 			<div class="topbar"><div class="breadcrumb"><b id="currentTabName">Home</b></div><div class="theme-switcher" aria-label="Chọn theme"><button class="theme-button active" data-theme-choice="light" title="Theme sáng" type="button">☀ Sáng</button><button class="theme-button" data-theme-choice="dark" title="Theme tối" type="button">◐ Tối</button><button class="theme-button" data-theme-choice="glass" title="Theme blur trong suốt" type="button">◌ Blur</button></div><div class="date" id="today"></div></div>
 			<section class="hero">
-				<div><h1> Wassup </em>.</h1><p> "Do it or don't do it, you will regret both." -Soren Kierkegaard- </p></div>
+				<div><h1> Wassup bro! <em>Notes</em> của bạn.</h1><p>Một khung đơn giản để gom các đường dẫn, ghi chú và những thứ bạn muốn mở lại thật nhanh.</p></div>
 				<button class="add-link-button" id="addLinkButton" type="button">＋ Thêm đường dẫn</button>
 			</section>
 			<div class="content-grid">
@@ -31,6 +32,8 @@
 	<dialog id="linkDialog"><form class="dialog-body" id="linkForm"><h2>Thêm đường dẫn</h2><label class="field">Tên hiển thị<input id="linkTitle" required placeholder="Ví dụ: Tài liệu dự án"></label><label class="field">Địa chỉ URL<input id="linkUrl" type="url" required placeholder="https://example.com"></label><div class="dialog-actions"><button class="cancel" type="button" data-close>Hủy</button><button class="add-link-button" type="submit">Thêm vào tab</button></div></form></dialog>
 	<dialog id="tabDialog"><form class="dialog-body" id="tabForm"><h2>New tab</h2><label class="field">Tên tab<input id="tabName" required maxlength="24" placeholder="Ví dụ: Học tập"></label><div class="field"><span>Biểu tượng đang chọn</span><input id="tabIcon" maxlength="2" value="◈" readonly><div class="icon-picker" aria-label="Chọn biểu tượng"><button class="icon-choice selected" data-icon="◈" type="button">◈</button><button class="icon-choice" data-icon="⌂" type="button">⌂</button><button class="icon-choice" data-icon="★" type="button">★</button><button class="icon-choice" data-icon="♥" type="button">♥</button><button class="icon-choice" data-icon="✎" type="button">✎</button><button class="icon-choice" data-icon="✦" type="button">✦</button><button class="icon-choice" data-icon="✧" type="button">✧</button><button class="icon-choice" data-icon="☀" type="button">☀</button><button class="icon-choice" data-icon="☕" type="button">☕</button><button class="icon-choice" data-icon="⚙" type="button">⚙</button><button class="icon-choice" data-icon="⚡" type="button">⚡</button><button class="icon-choice" data-icon="✓" type="button">✓</button><button class="icon-choice" data-icon="▣" type="button">▣</button><button class="icon-choice" data-icon="◉" type="button">◉</button><button class="icon-choice" data-icon="◇" type="button">◇</button><button class="icon-choice" data-icon="♬" type="button">♬</button><button class="icon-choice" data-icon="♟" type="button">♟</button><button class="icon-choice" data-icon="☁" type="button">☁</button><button class="icon-choice" data-icon="✈" type="button">✈</button><button class="icon-choice" data-icon="⌘" type="button">⌘</button><button class="icon-choice" data-icon="▤" type="button">▤</button><button class="icon-choice" data-icon="⚑" type="button">⚑</button><button class="icon-choice" data-icon="♧" type="button">♧</button><button class="icon-choice" data-icon="∞" type="button">∞</button></div></div><div class="dialog-actions"><button class="cancel" type="button" data-close>Hủy</button><button class="add-link-button" type="submit">Tạo tab</button></div></form></dialog>
 
+	<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 	<script src="script.js"></script>
 </body>
 </html>
